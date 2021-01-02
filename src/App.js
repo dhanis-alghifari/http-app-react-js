@@ -24,12 +24,20 @@ class App extends Component {
     this.setState({ posts });
   };
 
-  handleUpdate = (post) => {
-    console.log("Update", post);
+  handleUpdate = async (post) => {
+    post.title = "UPDATED";
+    await axios.put(apiEndpoint + "/" + post.id, post);
+
+    const posts = [...this.state.posts];
+    const index = posts.indexOf(post);
+    posts[index] = { ...post };
+    this.setState({ posts });
   };
 
-  handleDelete = (post) => {
-    console.log("Delete", post);
+  handleDelete = async (post) => {
+    await axios.delete(apiEndpoint + "/" + post.id);
+    const posts = this.state.posts.filter((p) => p.id !== post.id);
+    this.setState({ posts });
   };
 
   render() {
@@ -47,9 +55,9 @@ class App extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.posts.map(({ id, title }) => (
-              <tr key={id}>
-                <td>{title}</td>
+            {this.state.posts.map((post) => (
+              <tr key={post.id}>
+                <td>{post.title}</td>
                 <td>
                   <button
                     className="btn btn-info btn-sm"
